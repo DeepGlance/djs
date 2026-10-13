@@ -1,13 +1,30 @@
 {
-  "name": "djs",
-  "version": "0.0.0",
-  "private": true,
+  "name": "@deepglance/djs",
+  "version": "0.1.0",
   "license": "SEE LICENSE IN LICENSE",
-  "description": "Port of the LDC/DMD D-language compiler frontend to TypeScript",
+  "description": "The LDC 1.43.0 D compiler frontend in TypeScript: ldc2's diagnostics, -vcg-ast, JSON and Ddoc, in-process, no code generation",
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "exports": {
+    ".": "./dist/djs.js"
+  },
+  "bin": {
+    "djs": "bin/djs.js"
+  },
+  "files": [
+    "bin/",
+    "dist/",
+    "ldc-1.43.0/",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json",
+    "prepack": "npm run build",
     "test": "vitest run",
+    "test:no-oracle": "vitest run --exclude src/djs.test.ts --exclude src/dmd/dmodule.test.ts --exclude src/dmd/doc.test.ts --exclude src/dmd/json.test.ts --exclude src/dmd/sema.corpus.test.ts --exclude src/dmd/target.test.ts --exclude src/driver/cpreprocessor.test.ts",
     "test:watch": "vitest"
   },
   "devDependencies": {

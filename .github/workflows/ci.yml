@@ -1,0 +1,28 @@
+name: ci
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-14, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npm run typecheck
+      # The unit tests without the oracle tests, which compare djs with an LDC 1.43.0 install and LDC's source tree
+      # (the ORACLE CONSTANTs). The expected values were measured on an arm64 Mac host: on Linux the run is
+      # informational until measured there.
+      - run: npm run test:no-oracle
+        continue-on-error: ${{ matrix.os != 'macos-14' }}
+      - run: npm run build
+      - name: compile with the bundled import tree, no LDC installed
+        run: |
+          printf 'import std.stdio;\nvoid main() { writeln("hi"); }\n' > hello.d
+          node bin/djs.js -c -o- hello.d
