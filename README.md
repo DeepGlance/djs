@@ -8,7 +8,8 @@ source in-process, in Node, and reports what ldc2 reports. It generates no code.
 - **Diagnostics**: errors, warnings, deprecations and supplemental lines with the same text, locations, order and
   exit status as `ldmd2 -c -o-`.
 - **The frontend's outputs**: `-vcg-ast` (the lowered AST as D source), `-X` (the JSON description), `-D` (Ddoc
-  HTML), `-v`, `-vgc`, `-vtls`, `-vtemplates`.
+  HTML), `-H` (`.di` headers), `-mixin=` (the expanded string mixins), `-deps` (the module dependencies), `-v`,
+  `-vgc`, `-vtls`, `-vtemplates`.
 - **A library for tools**: `djsMain(args)` runs one compilation in the calling process; `djsMainKept(args)`
   recompiles after an edit by replaying the analysis of the modules that did not change; the query functions
   (`queryHover`, `queryDefinition`, `querySemanticTokens`, `queryInlayHints`, `queryCompletion`, and the others
@@ -62,7 +63,9 @@ Known limits and divergences:
 
 - **No code generation.** Object files, linking, `-run` and `-lib` are out of scope; runnable tests are compiled,
   never run.
-- **Refused switches** include `-H`/`-HC` (header generation), `-m32`, `-lib`, `-mixin=`, `-deps`, `-makedeps`.
+- **Refused switches** include `-HC` (C++ header generation), `-m32`, `-lib`, `-makedeps`, and `-mcpu=` for a CPU
+  without a feature table probed from ldc2 (the Apple M1-M5, the Cortex-A53/A72/A76/A78AE and the x86-64 levels
+  have one; `-mcpu=native` is resolved on an M2 only).
 - **DMD-style inline assembler on x86_64** is not analysed: the block is kept as an opaque statement and the module
   gets one warning (shown under `-wi`/`-w`, never counted as an error). Errors inside the block, and labels or
   closures created only by it, are not reported. GCC-style `asm` is analysed as ldc2 does. See LICENSE for why.
